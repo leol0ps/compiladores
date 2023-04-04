@@ -20,8 +20,9 @@
 comentario(#*)
 reservada begin|bool|else|end|false|if|int|program|read|real|repeat|string|then|true|until|var|write
 int [+-]?[1-9][0-9]*|0
-real  [-+]?[0-9]*\.[0-9]*
+real  [-+]?[0-9]*\.[0-9][0-9]*
 var [a-z][0-9a-zA-Z]*
+str \".*\"
 
 %%
 {reservada} {printa(yylineno,yytext);}
@@ -36,9 +37,11 @@ var [a-z][0-9a-zA-Z]*
 [/] {printf("%d: / -> OVER\n",yylineno);}
 [(] {printf("%d: ( -> LPAR\n",yylineno);}
 [)] {printf("%d: ) -> RPAR\n",yylineno);}
+{str} {printf("%d: %s -> STR_VAL\n",yylineno,yytext);}
 {var} {printf("%d: %s -> ID\n",yylineno,yytext);}
 {real} {printf("%d: %s -> REAL_VAL\n",yylineno,yytext);}
 {int} {printf("%d: %s -> INT_VAL\n",yylineno,yytext);}
+
 %%
 int main() {
   yylex();
