@@ -23,7 +23,7 @@ reservada begin|bool|else|end|false|if|int|program|read|real|repeat|string|then|
 int [+-]?[1-9][0-9]*|0
 real  [-+]?[0-9]*\.[0-9][0-9]*
 var [a-z][a-zA-Z]*
-str \".*\"
+str \"[^\"]*\"
 
 %%
 " " {}
