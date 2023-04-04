@@ -15,16 +15,20 @@
 	free(mas);
   }
 %}
+
 /* As definicoes abaixo sao chamadas de fragmentos, que podem
    ser usadas para formar ERs. */
-comentario(#*)
+comentario "{"[^}]*"}"
 reservada begin|bool|else|end|false|if|int|program|read|real|repeat|string|then|true|until|var|write
 int [+-]?[1-9][0-9]*|0
 real  [-+]?[0-9]*\.[0-9][0-9]*
-var [a-z][0-9a-zA-Z]*
+var [a-z][a-zA-Z]*
 str \".*\"
 
 %%
+" " {}
+"\n" { } 
+{comentario} {}
 {reservada} {printa(yylineno,yytext);}
 [;] {printf("%d: ; -> SEMI\n",yylineno);}
 "=" {printf("%d: = -> EQ\n",yylineno);}
