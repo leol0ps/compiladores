@@ -8,10 +8,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tables.h"
+#include "types.h"
 #include "parser.h"
+#include <string.h>
 StrTable* str_table;
 VarTable* var_table;
 Type type_of_id;
+Type type_conversion();
 int yylex(void);
 int yylex_destroy(void);
 void yyerror(char const *s);
@@ -84,7 +87,7 @@ var-decl-list:
 ;
 
 var-decl:
-  type-spec {type_of_id = (Type)yytext;} ID {declare_var_check();}SEMI
+  type-spec {type_of_id = type_conversion();} ID {declare_var_check();}SEMI
 ;
 
 type-spec:
@@ -171,7 +174,7 @@ int main() {
 void exists_var(){
     int a = lookup_var(var_table,yytext); 
     if( a < 0){
-      printf("SEMANTIC ERROR (%d): variable ’%s’ was not declared.",yylineno,yytext);
+      printf("SEMANTIC ERROR (%d): variable '%s' was not declared.",yylineno,yytext);
       exit(EXIT_FAILURE);
     }
 }
@@ -179,7 +182,7 @@ void exists_var(){
 void declare_var_check(){
     int a = lookup_var(var_table,yytext);
     if( a >= 0){
-      printf("SEMANTIC ERROR (%d): variable ’%s’ already declared at line %d.",yylineno,yytext,get_line(var_table,a));
+      printf("SEMANTIC ERROR (%d): variable '%s' already declared at line %d.",yylineno,yytext,get_line(var_table,a));
       exit(EXIT_FAILURE);
     }
     else{
@@ -187,3 +190,22 @@ void declare_var_check(){
     }  
 }
 
+Type type_conversion(){
+  
+  if(strcmp(yytext,"INT_VAL") == 0){
+        Type a = INT_TYPE;
+        return a;
+  }
+  if(strcmp(yytext,"STR_VAL") == 0){
+        Type a = STR_TYPE;
+        return a;
+  }
+  if(strcmp(yytext,"BOOL") == 0){
+        Type a = BOOL_TYPE;
+        return a;
+  }
+  if(strcmp(yytext,"REAL_VAL") == 0){
+        Type a = REAL_TYPE;
+        return a;
+  }  
+}

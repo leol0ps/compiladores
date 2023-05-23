@@ -72,10 +72,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tables.h"
+#include "types.h"
 #include "parser.h"
+#include <string.h>
 StrTable* str_table;
 VarTable* var_table;
 Type type_of_id;
+Type type_conversion();
 int yylex(void);
 int yylex_destroy(void);
 void yyerror(char const *s);
@@ -84,7 +87,7 @@ void declare_var_check();
 extern char *yytext;
 extern int yylineno;
 
-#line 88 "parser.c"
+#line 91 "parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -532,11 +535,11 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    69,    69,    73,    77,    78,    82,    83,    87,    87,
-      87,    91,    92,    93,    94,    98,   102,   103,   107,   108,
-     109,   110,   111,   115,   115,   119,   120,   124,   124,   128,
-     132,   136,   137,   138,   139,   140,   141,   142,   143,   144,
-     145,   146,   147,   148,   148
+       0,    72,    72,    76,    80,    81,    85,    86,    90,    90,
+      90,    94,    95,    96,    97,   101,   105,   106,   110,   111,
+     112,   113,   114,   118,   118,   122,   123,   127,   127,   131,
+     135,   139,   140,   141,   142,   143,   144,   145,   146,   147,
+     148,   149,   150,   151,   151
 };
 #endif
 
@@ -1691,79 +1694,79 @@ yyreduce:
     switch (yyn)
       {
   case 8: /* $@1: %empty  */
-#line 87 "parser.y"
-            {type_of_id = (Type)yytext;}
-#line 1697 "parser.c"
+#line 90 "parser.y"
+            {type_of_id = type_conversion();}
+#line 1700 "parser.c"
     break;
 
   case 9: /* $@2: %empty  */
-#line 87 "parser.y"
-                                            {declare_var_check();}
-#line 1703 "parser.c"
+#line 90 "parser.y"
+                                                 {declare_var_check();}
+#line 1706 "parser.c"
     break;
 
   case 23: /* $@3: %empty  */
-#line 115 "parser.y"
+#line 118 "parser.y"
      {exists_var();}
-#line 1709 "parser.c"
+#line 1712 "parser.c"
     break;
 
   case 24: /* assign-stmt: ID $@3 ASSIGN expr SEMI  */
-#line 115 "parser.y"
+#line 118 "parser.y"
                                      { yyval = unify_assign(yyvsp[-4],yyvsp[-2]);}
-#line 1715 "parser.c"
+#line 1718 "parser.c"
     break;
 
   case 27: /* $@4: %empty  */
-#line 124 "parser.y"
+#line 127 "parser.y"
           {exists_var();}
-#line 1721 "parser.c"
+#line 1724 "parser.c"
     break;
 
   case 31: /* expr: expr LT expr  */
-#line 136 "parser.y"
+#line 139 "parser.y"
                { yyval = unify_LT(yyvsp[-2],yyvsp[0]);}
-#line 1727 "parser.c"
+#line 1730 "parser.c"
     break;
 
   case 32: /* expr: expr EQ expr  */
-#line 137 "parser.y"
+#line 140 "parser.y"
                { yyval = unify_EQ(yyvsp[-2],yyvsp[0]);}
-#line 1733 "parser.c"
+#line 1736 "parser.c"
     break;
 
   case 33: /* expr: expr PLUS expr  */
-#line 138 "parser.y"
+#line 141 "parser.y"
                  {yyval = unify_plus(yyvsp[-2],yyvsp[0]);}
-#line 1739 "parser.c"
+#line 1742 "parser.c"
     break;
 
   case 34: /* expr: expr MINUS expr  */
-#line 139 "parser.y"
+#line 142 "parser.y"
                   {yyval = unify_minus(yyvsp[-2],yyvsp[0]);}
-#line 1745 "parser.c"
+#line 1748 "parser.c"
     break;
 
   case 35: /* expr: expr TIMES expr  */
-#line 140 "parser.y"
+#line 143 "parser.y"
                   {yyval = unify_times(yyvsp[-2],yyvsp[0]);}
-#line 1751 "parser.c"
+#line 1754 "parser.c"
     break;
 
   case 36: /* expr: expr OVER expr  */
-#line 141 "parser.y"
+#line 144 "parser.y"
                  {yyval = unify_over(yyvsp[-2],yyvsp[0]);}
-#line 1757 "parser.c"
+#line 1760 "parser.c"
     break;
 
   case 43: /* $@5: %empty  */
-#line 148 "parser.y"
+#line 151 "parser.y"
   {exists_var();}
-#line 1763 "parser.c"
+#line 1766 "parser.c"
     break;
 
 
-#line 1767 "parser.c"
+#line 1770 "parser.c"
 
         default: break;
       }
@@ -1998,7 +2001,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 151 "parser.y"
+#line 154 "parser.y"
 
 
 // Primitive error handling.
@@ -2022,7 +2025,7 @@ int main() {
 void exists_var(){
     int a = lookup_var(var_table,yytext); 
     if( a < 0){
-      printf("SEMANTIC ERROR (%d): variable ’%s’ was not declared.",yylineno,yytext);
+      printf("SEMANTIC ERROR (%d): variable '%s' was not declared.",yylineno,yytext);
       exit(EXIT_FAILURE);
     }
 }
@@ -2030,7 +2033,7 @@ void exists_var(){
 void declare_var_check(){
     int a = lookup_var(var_table,yytext);
     if( a >= 0){
-      printf("SEMANTIC ERROR (%d): variable ’%s’ already declared at line %d.",yylineno,yytext,get_line(var_table,a));
+      printf("SEMANTIC ERROR (%d): variable '%s' already declared at line %d.",yylineno,yytext,get_line(var_table,a));
       exit(EXIT_FAILURE);
     }
     else{
@@ -2038,3 +2041,22 @@ void declare_var_check(){
     }  
 }
 
+Type type_conversion(){
+  
+  if(strcmp(yytext,"INT_VAL") == 0){
+        Type a = INT_TYPE;
+        return a;
+  }
+  if(strcmp(yytext,"STR_VAL") == 0){
+        Type a = STR_TYPE;
+        return a;
+  }
+  if(strcmp(yytext,"BOOL") == 0){
+        Type a = BOOL_TYPE;
+        return a;
+  }
+  if(strcmp(yytext,"REAL_VAL") == 0){
+        Type a = REAL_TYPE;
+        return a;
+  }  
+}
