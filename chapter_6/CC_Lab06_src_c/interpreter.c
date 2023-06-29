@@ -190,7 +190,7 @@ void run_block(AST *ast) {
 
 // TODO
 void run_bool_val(AST *ast) {
-
+	pushi(get_data(ast));
 }
 
 // TODO
@@ -202,37 +202,75 @@ void run_eq(AST *ast) {
 		pushi(strcmp(get_string(st,popi()),get_string(st,popi())));	
 	}
 	else if(a == REAL_TYPE){
-		pushi( popf() < popf());
+		pushi( popf() ==  popf());
 	}
 	else{
-		return pushi(popi() < popi());
+		pushi(popi() == popi());
 	}
 
 }
 
 // TODO
 void run_if(AST *ast) {
-
+	rec_run_ast(get_child(ast,0));
+	if(popi()){
+		rec_run_ast(get_child(ast,1));
+	}
+	else{
+		rec_run_ast(get_child(ast,2));
+	}
 }
 
 // TODO
 void run_int_val(AST *ast) {
 
+	pushi(get_data(ast));
 }
 
 // TODO
 void run_lt(AST *ast) {
 
+	rec_run_ast(get_child(ast,0));
+	rec_run_ast(get_child(ast,1));
+	Type a = get_node_type(ast);
+	if(a == STR_TYPE){
+		pushi(strcmp(get_string(st,popi()),get_string(st,popi())));	
+	}
+	else if(a == REAL_TYPE){
+		pushi( popf() <  popf());
+	}
+	else{
+		pushi(popi() < popi());
+	}
 }
 
 // TODO
 void run_minus(AST *ast) {
-
+	rec_run_ast(get_child(ast,0));
+	rec_run_ast(get_child(ast,1));
+	Type first = get_type(get_child(ast,0));
+	Type sec = get_node_type(get_child(ast,1));
+	if(first == REAL_TYPE || sec == REAL_TYPE){
+		pushf(popf() - popf());
+	}
+	else{
+		pushi(popi() - popi());
+	}
 }
 
 // TODO
 void run_over(AST *ast) {
 
+	rec_run_ast(get_child(ast,0));
+	rec_run_ast(get_child(ast,1));
+	Type first = get_type(get_child(ast,0));
+	Type sec = get_node_type(get_child(ast,1));
+	if(first == REAL_TYPE || sec == REAL_TYPE){
+		pushf(popf() / popf());
+	}
+	else{
+		pushi(popi() / popi());
+	}
 }
 
 // TODO
@@ -253,12 +291,12 @@ void run_read(AST *ast) {
 
 // TODO
 void run_real_val(AST *ast) {
-
+	pushi(get_float_data(ast));
 }
 
 // TODO
 void run_repeat(AST *ast) {
-
+	
 }
 
 void run_str_val(AST *ast) {
@@ -269,6 +307,16 @@ void run_str_val(AST *ast) {
 // TODO
 void run_times(AST *ast) {
 
+	rec_run_ast(get_child(ast,0));
+	rec_run_ast(get_child(ast,1));
+	Type first = get_type(get_child(ast,0));
+	Type sec = get_node_type(get_child(ast,1));
+	if(first == REAL_TYPE || sec == REAL_TYPE){
+		pushf(popf() * popf());
+	}
+	else{
+		pushi(popi() * popi());
+	}
 }
 
 void run_var_decl(AST *ast) {
